@@ -1,6 +1,7 @@
 import subprocess
 from pathlib import Path
 
+from agentcore.specs.agents_md import sync_agents_md
 from agentcore.specs.lint import spec_lint
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -66,6 +67,8 @@ def test_lint_flags_missing_verifying_test(tmp_path: Path) -> None:
     (repo_root / "tests" / "unit").mkdir(parents=True)
     (repo_root / "tests" / "unit" / "test_specs_lint.py").write_text("def test_other(): pass\n")
     _commit_all(repo_root)
+    sync_agents_md(specs_dir, repo_root)
+    _commit_all(repo_root)
 
     failures = spec_lint(specs_dir, repo_root)
 
@@ -84,6 +87,8 @@ def test_lint_passes_clean_spec(tmp_path: Path) -> None:
     (repo_root / "tests" / "unit" / "test_specs_lint.py").write_text(
         "def test_lint_passes_clean_spec(): pass\n"
     )
+    _commit_all(repo_root)
+    sync_agents_md(specs_dir, repo_root)
     _commit_all(repo_root)
 
     failures = spec_lint(specs_dir, repo_root)

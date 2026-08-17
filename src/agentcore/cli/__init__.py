@@ -1,8 +1,9 @@
 """`forge` CLI entrypoint.
 
-`forge spec lint` and `forge spec show` land in P1 alongside the spec
-engine (ADR-001). Remaining subcommands (`run`, `resume`, `status`, `eval`,
-`cost report`, `mcp doctor`) land in P2+.
+`forge spec lint`, `forge spec show`, `forge spec for`, and
+`forge spec sync-agents-md` land in P1/P2 alongside the spec engine and
+binding layer (ADR-001, ADR-002, ADR-003). Remaining subcommands (`run`,
+`resume`, `status`, `eval`, `cost report`, `mcp doctor`) land in P3+.
 """
 
 from __future__ import annotations
@@ -11,6 +12,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from agentcore.specs.agents_md import sync_agents_md
 from agentcore.specs.index import build_index
 from agentcore.specs.lint import spec_lint
 from agentcore.specs.loader import SpecParseError, SpecValidationError, load_spec
@@ -53,6 +55,13 @@ def _cmd_spec_for(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_spec_sync_agents_md(args: argparse.Namespace) -> int:
+    written = sync_agents_md(args.specs_dir, args.repo_root)
+    for path, _content in written:
+        print(f"wrote {path}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="forge")
     subparsers = parser.add_subparsers(dest="command")
@@ -73,6 +82,13 @@ def build_parser() -> argparse.ArgumentParser:
     for_parser.add_argument("target")
     for_parser.add_argument("--specs-dir", dest="specs_dir", default="specs")
     for_parser.set_defaults(func=_cmd_spec_for)
+
+    sync_parser = spec_subparsers.add_parser(
+        "sync-agents-md", help="(re)generate nested AGENTS.md files from the governs index"
+    )
+    sync_parser.add_argument("--specs-dir", dest="specs_dir", default="specs")
+    sync_parser.add_argument("--repo-root", dest="repo_root", default=".")
+    sync_parser.set_defaults(func=_cmd_spec_sync_agents_md)
 
     return parser
 

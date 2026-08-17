@@ -47,3 +47,10 @@ def test_cli_spec_for_unowned_path() -> None:
 
     assert result.returncode == 1
     assert "no spec governs" in result.stderr
+
+
+def test_cli_spec_sync_agents_md_is_idempotent_on_repo() -> None:
+    result = _run("spec", "sync-agents-md")
+
+    assert result.returncode == 0
+    assert "src/agentcore/specs/AGENTS.md" in result.stdout

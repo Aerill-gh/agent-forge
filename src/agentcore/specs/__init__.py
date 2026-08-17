@@ -1,9 +1,11 @@
-"""agentcore.specs — the spec engine (ADR-001).
+"""agentcore.specs — the spec engine and binding layer (ADR-001/002/003).
 
-Pydantic models per spec kind, a frontmatter loader, and `spec_lint` for
-CI (`spec-guard.yml`). The `governs:` resolver lands in P2.
+Pydantic models per spec kind, a frontmatter loader, a `governs:` index +
+resolver, a nested-AGENTS.md generator, and `spec_lint` for CI
+(`spec-guard.yml`).
 """
 
+from agentcore.specs.agents_md import StaleAgentsMd, check_agents_md, sync_agents_md
 from agentcore.specs.decorators import registry, spec
 from agentcore.specs.index import Diagnostic, SpecIndex, build_index
 from agentcore.specs.lint import LintFailure, spec_lint
@@ -18,11 +20,14 @@ __all__ = [
     "SpecIndex",
     "SpecParseError",
     "SpecValidationError",
+    "StaleAgentsMd",
     "build_index",
+    "check_agents_md",
     "load_spec",
     "model_for_id",
     "registry",
     "resolve",
     "spec",
     "spec_lint",
+    "sync_agents_md",
 ]

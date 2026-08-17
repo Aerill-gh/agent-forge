@@ -63,7 +63,8 @@ def _tracked_files(repo_root: Path) -> list[str]:
     return [line for line in result.stdout.splitlines() if line]
 
 
-def _iter_spec_files(specs_dir: Path) -> list[Path]:
+def iter_spec_files(specs_dir: str | Path) -> list[Path]:
+    specs_dir = Path(specs_dir)
     return sorted(
         p
         for p in specs_dir.rglob("*.md")
@@ -71,15 +72,27 @@ def _iter_spec_files(specs_dir: Path) -> list[Path]:
     )
 
 
-def _load_specs(specs_dir: Path) -> dict[str, SpecBase]:
+def load_specs(specs_dir: str | Path) -> dict[str, SpecBase]:
+    """Load every spec under specs_dir, keyed by id. Skips unparseable files."""
     specs: dict[str, SpecBase] = {}
-    for path in _iter_spec_files(specs_dir):
+    for path in iter_spec_files(specs_dir):
         try:
             loaded = load_spec(path)
         except (SpecParseError, SpecValidationError):
             continue  # spec_lint's per-file pass reports parse/validation failures
         specs[loaded.id] = loaded
     return specs
+
+
+def spec_file_path(specs_dir: str | Path, spec_id: str) -> Path | None:
+    """Find the file path for a given spec id, or None if not found."""
+    for path in iter_spec_files(specs_dir):
+        try:
+            if load_spec(path).id == spec_id:
+                return path
+        except (SpecParseError, SpecValidationError):
+            continue
+    return None
 
 
 def owner_for_path(
@@ -122,7 +135,7 @@ def build_index(specs_dir: str | Path, repo_root: str | Path | None = None) -> S
     specs_dir = Path(specs_dir)
     root = Path(repo_root) if repo_root is not None else specs_dir.parent
 
-    specs = _load_specs(specs_dir)
+    specs = load_specs(specs_dir)
     tracked = _tracked_files(root)
     diagnostics: list[Diagnostic] = []
 
@@ -152,8 +165,8 @@ def build_index(specs_dir: str | Path, repo_root: str | Path | None = None) -> S
     for path in tracked:
         if path.split("/", 1)[0] not in GOVERNED_ROOTS:
             continue
-        if Path(path).name == ".gitkeep":
-            continue
+        if Path(path).name in (".gitkeep", "AGENTS.md"):
+            continue  # generated meta files (ADR-003), not feature code needing their own spec
         if path not in owners:
             diagnostics.append(
                 Diagnostic("orphan", f"{path!r} is under a governed root but no spec governs it")
