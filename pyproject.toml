@@ -1,0 +1,67 @@
+[project]
+name = "agentcore"
+version = "0.1.0"
+description = "agent-forge: reusable agentic platform framework — spec-driven, UV-managed, LangGraph-orchestrated, LangSmith-traced"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "pre-commit>=3.8",
+]
+test = [
+    "pytest>=8.3",
+    "pytest-cov>=5.0",
+]
+eval = []
+docs = []
+lint = [
+    "ruff>=0.6",
+    "mypy>=1.11",
+]
+
+[project.optional-dependencies]
+postgres = []
+mcp = []
+langsmith = []
+self-hosted-llm = []
+
+[project.scripts]
+forge = "agentcore.cli:main"
+
+[tool.uv]
+default-groups = ["dev", "test"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agentcore"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["agentcore"]
+mypy_path = "src"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["src/agentcore"]
+
+# fail_under = 80 activates once agentcore has real logic to cover (P1+).
+# P0 ships stub subpackages, so the floor would fail on the skeleton itself.
+[tool.coverage.report]
+fail_under = 0

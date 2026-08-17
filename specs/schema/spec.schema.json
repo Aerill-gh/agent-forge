@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-forge/specs/schema/spec.schema.json",
+  "title": "agent-forge spec frontmatter",
+  "description": "Common shape for the YAML frontmatter of every spec kind (CON-/AGT-/GRP-/TOOL-/DS-/EVL-/OPS-/ADR-). Full pydantic models with per-kind validation land in P1 (agentcore.specs); this is the P0 placeholder every template already conforms to.",
+  "type": "object",
+  "required": ["id", "title", "status", "version", "owner"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^(CON|AGT|GRP|TOOL|DS|EVL|OPS|ADR)-[0-9]{3,}$"
+    },
+    "title": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "in_review", "approved", "deprecated"]
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "owner": { "type": "string" },
+    "governs": {
+      "type": "object",
+      "properties": {
+        "paths": { "type": "array", "items": { "type": "string" } },
+        "resources": { "type": "array", "items": { "type": "string" } }
+      },
+      "minProperties": 1
+    },
+    "acceptance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "then", "verified_by"],
+        "properties": {
+          "id": { "type": "string" },
+          "given": { "type": "string" },
+          "then": { "type": "string" },
+          "verified_by": { "type": "string" }
+        }
+      }
+    }
+  }
+}
