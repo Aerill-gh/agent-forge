@@ -46,6 +46,7 @@ class SpecBase(BaseModel):
     status: SpecStatus
     version: str
     owner: str
+    extends: str | None = None
     governs: Governs | None = None
     acceptance: list[AcceptanceCriterion] = Field(default_factory=list)
 

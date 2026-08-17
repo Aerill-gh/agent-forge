@@ -8,6 +8,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
+from agentcore.specs.index import build_index
 from agentcore.specs.loader import SpecParseError, SpecValidationError, load_spec
 from agentcore.specs.models import SpecBase
 
@@ -76,4 +77,8 @@ def spec_lint(specs_dir: str | Path, repo_root: str | Path | None = None) -> lis
         if path.name.startswith("_") or "templates" in path.parts:
             continue
         failures.extend(lint_spec_file(path, root))
+
+    index = build_index(specs_dir, root)
+    failures.extend(LintFailure(specs_dir, str(diagnostic)) for diagnostic in index.diagnostics)
+
     return failures

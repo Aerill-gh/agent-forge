@@ -5,11 +5,14 @@ agentic projects. See [agentic-platform-plan.md](agentic-platform-plan.md)
 for the full design and [AGENTS.md](AGENTS.md) for the rules a coding agent
 must follow in this repo.
 
-**Status:** P1 (spec engine) — UV workspace, skeleton, CI, constitution,
-spec templates, and a Pydantic-backed spec loader + `spec_lint` gate
-(`forge spec lint`, `.github/workflows/spec-guard.yml`) are in place. No
-real agent runtime, `governs:` resolver, or MCP governance yet; those land
-in P2+.
+**Status:** P2 (binding layer) — UV workspace, skeleton, CI, constitution,
+spec templates, a Pydantic-backed spec loader + `spec_lint` gate, a
+`governs:` ownership index (`forge spec for`, orphan/ambiguity/dangling
+checks folded into `spec_lint`), and a local `PreToolUse` hook
+(`scripts/hooks/resolve_spec.py`, wired in `.claude/settings.json`) that
+blocks edits to files no spec governs are in place. Nested `AGENTS.md`
+files, the `spec-workflow` skill, and the agent runtime are not built yet;
+those land in P2 (remainder) / P3.
 
 ## Setup
 

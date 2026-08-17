@@ -33,3 +33,17 @@ def test_cli_spec_show_unknown_id() -> None:
 
     assert result.returncode == 1
     assert "no spec file found" in result.stderr
+
+
+def test_cli_spec_for_owned_path() -> None:
+    result = _run("spec", "for", "src/agentcore/specs/index.py")
+
+    assert result.returncode == 0
+    assert result.stdout.strip() == "ADR-002"
+
+
+def test_cli_spec_for_unowned_path() -> None:
+    result = _run("spec", "for", "src/totally/unowned/module.py")
+
+    assert result.returncode == 1
+    assert "no spec governs" in result.stderr

@@ -11,8 +11,10 @@ import argparse
 import sys
 from pathlib import Path
 
+from agentcore.specs.index import build_index
 from agentcore.specs.lint import spec_lint
 from agentcore.specs.loader import SpecParseError, SpecValidationError, load_spec
+from agentcore.specs.resolve import resolve
 
 
 def _cmd_spec_lint(args: argparse.Namespace) -> int:
@@ -41,6 +43,16 @@ def _cmd_spec_show(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_spec_for(args: argparse.Namespace) -> int:
+    index = build_index(args.specs_dir)
+    spec_id = resolve(args.target, index)
+    if spec_id is None:
+        print(f"forge spec for: no spec governs {args.target!r}", file=sys.stderr)
+        return 1
+    print(spec_id)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="forge")
     subparsers = parser.add_subparsers(dest="command")
@@ -56,6 +68,11 @@ def build_parser() -> argparse.ArgumentParser:
     show_parser.add_argument("spec_id")
     show_parser.add_argument("--specs-dir", dest="specs_dir", default="specs")
     show_parser.set_defaults(func=_cmd_spec_show)
+
+    for_parser = spec_subparsers.add_parser("for", help="resolve the spec governing a target path")
+    for_parser.add_argument("target")
+    for_parser.add_argument("--specs-dir", dest="specs_dir", default="specs")
+    for_parser.set_defaults(func=_cmd_spec_for)
 
     return parser
 

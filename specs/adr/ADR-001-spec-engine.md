@@ -2,7 +2,7 @@
 id: ADR-001
 title: Spec engine — Pydantic models, loader, and lint gate
 status: approved
-version: 1.0.0
+version: 1.1.0
 owner: "@vachik"
 date: 2026-08-17
 governs:
@@ -10,6 +10,8 @@ governs:
     - "src/agentcore/specs/**"
     - "tests/unit/test_specs_*.py"
     - ".github/workflows/spec-guard.yml"
+    - "src/agentcore/**"
+    - "tests/**"
 acceptance:
   - id: AC-1
     given: "a spec file with valid frontmatter for its id prefix"
@@ -99,3 +101,16 @@ Build `agentcore.specs` as the spec engine:
 - This does not yet implement the `governs:` resolver (which file is
   governed by which spec) — that is explicitly P2 (binding layer) per the
   plan's milestone table, and is out of scope here.
+
+**v1.1.0 amendment (ADR-002):** the binding layer's `owner_for_path`
+deliberately excludes `CON-` specs from claiming file ownership — a
+constitution states repo-wide rules, it doesn't resolve the "this file has
+a governing spec" gate on its own (see ADR-002). That surfaced every
+pre-P2 stub file under `src/agentcore/**` and `tests/**` (empty
+subpackages, `.gitkeep` placeholders, P0/P1 scaffolding) as unowned. Per
+`CON-001` §5 / `CLAUDE.md`'s ownership-granularity rule — "coarse
+per-module ownership is acceptable for shared `agentcore` utilities that
+no single feature spec owns" — `governs.paths` was widened to add
+`src/agentcore/**` and `tests/**` as ADR-001's coarse catch-all for
+exactly that scaffolding; more specific specs (ADR-002's per-file patterns,
+future `AGT-`/`TOOL-` specs) still win via longest-match.
