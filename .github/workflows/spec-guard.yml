@@ -1,0 +1,29 @@
+name: spec-guard
+
+on:
+  pull_request:
+    paths:
+      - "specs/**"
+      - "src/agentcore/specs/**"
+
+concurrency:
+  group: spec-guard-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  spec-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.12.3"
+          enable-cache: true
+
+      - name: Sync dependencies
+        run: uv sync --frozen
+
+      - name: forge spec lint
+        run: uv run forge spec lint specs

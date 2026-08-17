@@ -5,9 +5,11 @@ agentic projects. See [agentic-platform-plan.md](agentic-platform-plan.md)
 for the full design and [AGENTS.md](AGENTS.md) for the rules a coding agent
 must follow in this repo.
 
-**Status:** P0 (foundations) — UV workspace, skeleton, CI, constitution and
-spec templates are in place. No real spec engine, agent runtime, or MCP
-governance yet; those land in P1+.
+**Status:** P1 (spec engine) — UV workspace, skeleton, CI, constitution,
+spec templates, and a Pydantic-backed spec loader + `spec_lint` gate
+(`forge spec lint`, `.github/workflows/spec-guard.yml`) are in place. No
+real agent runtime, `governs:` resolver, or MCP governance yet; those land
+in P2+.
 
 ## Setup
 
