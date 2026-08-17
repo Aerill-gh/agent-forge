@@ -28,6 +28,7 @@ status: draft
 version: 0.1.0
 owner: "@tester"
 model_tier: light
+prompt_path: "prompts/fake/fake_system.md"
 budget: { max_tokens_per_run: 1, max_usd_per_run: 0.1, max_tool_calls: 1 }
 io: { input_schema: "x.json", output_schema: "y.json" }
 governs:

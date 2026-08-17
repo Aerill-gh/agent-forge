@@ -1,0 +1,3 @@
+# Loaded by agentcore.config.load_config() when AGENTCORE_ENV=prod.
+# Never put secrets here — API keys come from env vars only, per ADR-004.
+env: prod

@@ -88,6 +88,7 @@ class IO(BaseModel):
 
 class AgentSpec(SpecBase):
     model_tier: ModelTier
+    prompt_path: str
     tools: list[str] = Field(default_factory=list)
     data_sources: list[str] = Field(default_factory=list)
     budget: Budget
@@ -110,8 +111,15 @@ class EvalSpec(SpecBase):
     pass
 
 
+LangSmithTarget = Literal["cloud", "self_hosted"]
+DeployTarget = Literal["self_hosted", "langgraph_platform"]
+
+
 class OpsSpec(SpecBase):
-    pass
+    deploy_target: DeployTarget
+    providers: list[str] = Field(default_factory=list)
+    langsmith_target: LangSmithTarget = "cloud"
+    langsmith_endpoint: str | None = None  # required when langsmith_target=self_hosted
 
 
 class AdrSpec(SpecBase):

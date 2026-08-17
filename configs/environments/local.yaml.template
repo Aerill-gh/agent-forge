@@ -1,0 +1,4 @@
+# Loaded by agentcore.config.load_config() when AGENTCORE_ENV=local
+# (the default). Never put secrets here — API keys come from env vars
+# only (AGENTCORE_ANTHROPIC_API_KEY etc), per ADR-004.
+env: local

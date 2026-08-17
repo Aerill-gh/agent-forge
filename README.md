@@ -5,16 +5,20 @@ agentic projects. See [agentic-platform-plan.md](agentic-platform-plan.md)
 for the full design and [AGENTS.md](AGENTS.md) for the rules a coding agent
 must follow in this repo.
 
-**Status:** P2 (binding layer) complete — UV workspace, skeleton, CI,
-constitution, spec templates, a Pydantic-backed spec loader + `spec_lint`
-gate, a `governs:` ownership index (`forge spec for`,
-orphan/ambiguity/dangling checks folded into `spec_lint`), a local
-`PreToolUse` hook (`scripts/hooks/resolve_spec.py`, wired in
-`.claude/settings.json`) that blocks edits to files no spec governs,
-generated nested `AGENTS.md` files kept in sync by `spec_lint`
-(`forge spec sync-agents-md`), and the `spec-workflow` skill are all in
-place. The agent runtime, `GovernedClient`, and multi-agent graphs are not
-built yet; those land in P3+.
+**Status:** P3 (agent runtime) — P0-P2 (spec engine, binding layer, hooks,
+nested `AGENTS.md`, `spec-workflow` skill) are complete; see git history
+for that layer. P3 adds: layered `AppConfig` (`agentcore.config`), a
+provider-agnostic `ModelRouter` (`agentcore.llm`, tiers from
+`configs/models.yaml`, fallback chains via `init_chat_model`), a RAIL
+prompt loader with `## Limits`-required linting (`agentcore.prompts`), an
+`AGT-` spec -> compiled LangGraph agent factory (`agentcore.agents`), a
+pure-Python `BudgetTracker` (`agentcore.budget`), and LangSmith env-var
+wiring off an `OPS-` spec (`agentcore.observability`). All verified
+against a fake/injected chat model in this repo's own tests — no real
+agent runs here (per `CLAUDE.md`), so nothing here makes a live provider
+call; that's the generated-project verification point, P8. `DS-`
+enforcement (`GovernedClient`), MCP tooling, and multi-agent graph
+builders are not built yet; those land in P4/P5.
 
 ## Setup
 
