@@ -26,14 +26,14 @@ class LintFailure:
         return f"{self.spec_path}: {self.message}"
 
 
-def _verified_by_resolves(verified_by: str, repo_root: Path) -> bool:
+def verified_by_resolves(verified_by: str, repo_root: Path) -> bool:
     test_match = _TEST_REF_PATTERN.match(verified_by)
     if test_match:
         test_path = repo_root / test_match.group("path")
         if not test_path.is_file():
             return False
         func_name = test_match.group("func")
-        pattern = rf"^\s*def {re.escape(func_name)}\s*\("
+        pattern = rf"^\s*(?:async\s+)?def {re.escape(func_name)}\s*\("
         return re.search(pattern, test_path.read_text(), re.M) is not None
 
     eval_match = _EVAL_REF_PATTERN.match(verified_by)
@@ -56,7 +56,7 @@ def lint_spec_file(path: Path, repo_root: Path) -> list[LintFailure]:
         return [LintFailure(path, str(exc))]
 
     for criterion in spec.acceptance:
-        if not _verified_by_resolves(criterion.verified_by, repo_root):
+        if not verified_by_resolves(criterion.verified_by, repo_root):
             failures.append(
                 LintFailure(
                     path,

@@ -44,6 +44,8 @@ title: Fake tool
 status: draft
 version: 0.1.0
 owner: "@tester"
+kind: mcp_server
+rate_limits: { max_calls_per_run: 10, max_calls_per_minute: 30 }
 governs:
   paths:
     - "src/agents/fake/other.py"

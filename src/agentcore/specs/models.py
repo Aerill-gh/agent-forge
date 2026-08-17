@@ -99,12 +99,37 @@ class GraphSpec(SpecBase):
     pass
 
 
+class RateLimits(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    max_calls_per_run: int
+    max_calls_per_minute: int
+
+
+DataClassification = Literal["public", "internal", "confidential"]
+ToolKind = Literal["mcp_server", "local_tool"]
+
+
 class ToolSpec(SpecBase):
-    pass
+    kind: ToolKind
+    scopes: list[str] = Field(default_factory=list)
+    rate_limits: RateLimits
+    data_classification: DataClassification = "internal"
+
+
+class DataSourceAccess(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    allowed_tables: list[str] = Field(default_factory=list)
+    denied_columns: list[str] = Field(default_factory=list)
+    max_rows: int = 1000
 
 
 class DataSourceSpec(SpecBase):
-    pass
+    classification: DataClassification
+    access: DataSourceAccess
+    semantics: str
+    freshness: str
 
 
 class EvalSpec(SpecBase):
